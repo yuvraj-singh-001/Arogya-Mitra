@@ -15,6 +15,8 @@ const Header = ({ isCollapsed = false }) => {
   const dispatch = useDispatch();
 
   const loggedUser = useSelector(state => state.user.loggedUser);
+
+   
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isMoreMenuOpen, setIsMoreMenuOpen] = useState(false);
   const location = useLocation();
@@ -126,8 +128,8 @@ const Header = ({ isCollapsed = false }) => {
               <Icon name="User" size={16} color="white" />
             </div>
             <div className="hidden md:flex flex-col">
-              <span className="text-sm font-medium text-text-primary">{loggedUser.role === "Doctor" ? `Dr.${loggedUser.fullname}` : loggedUser.fullname}</span>
-              <span className="text-xs text-text-secondary">{loggedUser.role}</span>
+              <span className="text-sm font-medium text-text-primary">{loggedUser.user.role === "Doctor" ? `Dr.${loggedUser.user.name}` : loggedUser.user.name}</span>
+              <span className="text-xs text-text-secondary capitalize">{loggedUser.user.role}</span>
             </div>
           </div>
 

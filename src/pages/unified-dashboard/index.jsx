@@ -9,9 +9,12 @@ import UpcomingSchedule from './components/UpcomingSchedule';
 import SystemStatusPanel from './components/SystemStatusPanel';
 import NotificationCenter from './components/NotificationCenter';
 import { useSelector } from 'react-redux';
+ 
 const UnifiedDashboard = () => {
+
+ 
   const loggedUser = useSelector(state => state.user.loggedUser);
-  const userRole = loggedUser?.role.toLowerCase(); // patient, doctor, admin
+   const userRole = loggedUser.user.role ; // Default to 'patient' if not set
 
 
 
@@ -112,7 +115,7 @@ const UnifiedDashboard = () => {
           {/* Welcome Header */}
           <WelcomeHeader
             userRole={userRole}
-            userName={loggedUser?.fullname || 'User'}
+            userName={loggedUser?.user.name || 'User'}
             currentTime={currentTime}
           />
 
@@ -120,7 +123,7 @@ const UnifiedDashboard = () => {
           <div className=' flex flex-col  gap-6'>
             <QuickStatsGrid
               userRole={userRole}
-              stats={mockStats?.[userRole]}
+              stats={loggedUser?.user?.[userRole]}
             />
 
 

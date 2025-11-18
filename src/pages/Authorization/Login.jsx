@@ -3,13 +3,15 @@ import { Mail, Lock, User } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { login } from '../../redux/userSlice.js';
+import { loginUser } from '../../redux/userSlice.js';
 
 export default function Login() {
 
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const allUsers = useSelector((state) => state.user.allUsers);
+    const [loading, setLoading] = useState(false);
+
+
     const [error, setError] = useState(null);
 
 
@@ -27,39 +29,41 @@ export default function Login() {
         });
     };
 
-    const handleLogin = (e) => {
+    const handleLogin = async (e) => {
         e.preventDefault();
         setError(null);
+        setLoading(true);
 
-        // Check credentials
-        const user = allUsers.find(u => u.email === formData.email && u.password === formData.password);
-        console.log(user)
-        if (!user) {
-            console.log("user not found")
-            setError('Invalid email or password');
-            return;
+        // Validate form data
+
+        try {
+
+            const result = await dispatch(loginUser({
+                email: formData.email,
+                password: formData.password
+            })).unwrap();
+
+            console.log(result, " Login result");
+            setLoading(false);
+         
+            
+
+
+            // Save user if remember me is checked
+            if (formData.remember) {
+                localStorage.setItem("loggedUser", JSON.stringify(result));
+            }
+
+            navigate("/home");
         }
-
-        // Save login to Redux
-        dispatch(login(user));
-
-        // Remember me
-        if (formData.remember) {
-            localStorage.setItem('loggedUser', JSON.stringify(user));
-        } else {
-            sessionStorage.setItem('loggedUser', JSON.stringify(user));
+        catch (err) {
+            setLoading(false);
+            // Handle error
+            console.error("Login error:", err);
+            setError(err || "Invalid Email or Password");
         }
-
-
-        setFormData({
-            email: '',
-            password: '',
-            remember: false
-        });
-
-        // Navigate to unified dashboard (or default page)
-        navigate('/home');
     };
+
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-100 flex items-center justify-center p-4">
@@ -140,9 +144,10 @@ export default function Login() {
                             {/* Login Button */}
                             <button
                                 onClick={handleLogin}
+                                disabled={loading}
                                 className="w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white py-3 rounded-lg font-semibold hover:from-blue-600 hover:to-blue-700 transform transition-all duration-300 hover:scale-105 hover:shadow-xl active:scale-95 mt-6"
                             >
-                                Login to Portal
+                                {loading ? "Loading...": "Login to Portal" }   
                             </button>
 
                             {/* Divider */}
